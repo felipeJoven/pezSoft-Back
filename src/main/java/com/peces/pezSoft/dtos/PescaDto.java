@@ -3,7 +3,7 @@ package com.peces.pezSoft.dtos;
 import lombok.Data;
 
 @Data
-public class PescaDTO {
+public class PescaDto {
 
     private int animalesPescados;
     private double pesoPromedio;

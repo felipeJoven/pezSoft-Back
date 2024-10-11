@@ -17,6 +17,6 @@ import lombok.Setter;
 public class TipoProveedor extends Base {
 
     @Column(name = "tipo_proveedor", nullable = false)
-    private String tipoProveedor;
+    private String name;
 
 }

@@ -5,4 +5,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TipoProveedorRepository extends BaseRespository<TipoProveedor, Integer> {
+
+    String findByName(String name);
 }

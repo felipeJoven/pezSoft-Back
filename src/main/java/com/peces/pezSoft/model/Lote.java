@@ -28,25 +28,24 @@ public class Lote extends Base {
     @Column(name = "fecha_siembra", nullable = false)
     private LocalDate fechaSiembra;
 
-    @Column(name = "animales_inicial")
-    private Integer animalesInicial;
+    @Column(name = "animales_iniciales")
+    private Integer animalesIniciales;
 
     @Transient
     private Long diasDeSiembra;
 
-    // Proveedor
-    @ManyToOne(optional = false)
-    @JoinColumn(nullable = false)
-    private Proveedor proveedor;
-
     // Especies
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
-    private Especie especies;
+    private Especie especie;
 
     // Unidad productiva
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private UnidadProductiva unidadProductiva;
 
+    // Proveedor
+    @ManyToOne(optional = false)
+    @JoinColumn(nullable = false)
+    private Proveedor proveedor;
 }

@@ -31,4 +31,6 @@ public class UnidadProductiva extends Base {
     @Column(nullable = false)
     private double profundidad;
 
+    @Column(nullable = false)
+    private Integer estado;
 }

@@ -1,4 +1,4 @@
-package com.fish.fishNet.dtos;
+package com.peces.pezSoft.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,6 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DefaultResponseDto {
+
     private String rol; // Campo para almacenar el rol
     private String usuario; // Campo para almacenar el usuario
 

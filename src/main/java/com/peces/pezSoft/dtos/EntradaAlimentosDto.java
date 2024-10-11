@@ -1,10 +1,10 @@
-package com.fish.fishNet.dtos;
+package com.peces.pezSoft.dtos;
 
 import lombok.Data;
 import java.time.LocalDate;
 
 @Data
-public class EntradaAlimentosDTO {
+public class EntradaAlimentosDto {
 
     private String numeroFactura;
     private LocalDate fechaVencimiento;

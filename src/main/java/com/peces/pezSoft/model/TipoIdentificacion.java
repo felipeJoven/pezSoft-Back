@@ -17,6 +17,6 @@ import lombok.Setter;
 public class TipoIdentificacion extends Base {
 
     @Column(name = "tipo_identificacion", nullable = false)
-    private String tipoIdentificacion;
+    private String name;
 
 }

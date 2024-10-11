@@ -47,5 +47,4 @@ public class Proveedor extends Base {
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private TipoIdentificacion tipoIdentificacion;
-
 }

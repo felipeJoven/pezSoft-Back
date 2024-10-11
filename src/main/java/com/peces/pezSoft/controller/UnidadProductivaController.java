@@ -15,13 +15,27 @@ public class UnidadProductivaController {
     private UnidadProductivaService unidadProductivaService;
 
     @GetMapping("")
-    public ResponseEntity<?> getAllUnits() {
-        return unidadProductivaService.listarUnidadP();
+    public ResponseEntity<?> obtenerUnidades(@RequestParam(required = false) String filtro) {
+        return unidadProductivaService.listarUnidadP(filtro);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> verUnidadId(@PathVariable Integer id) {
+        return unidadProductivaService.listarUnidadPPorId(id);
     }
 
     @PostMapping("")
-    public ResponseEntity<?> addUnit(@RequestBody UnidadProductiva unidadP) {
+    public ResponseEntity<?> crearUnidad(@RequestBody UnidadProductiva unidadP) {
         return unidadProductivaService.agregarUnidadP(unidadP);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<?> editarUnidad(@PathVariable Integer id, @RequestBody UnidadProductiva unidadP) {
+        return unidadProductivaService.actualizarUnidadP(id, unidadP);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> borrarUnidad(@PathVariable Integer id) {
+        return unidadProductivaService.eliminarUnidadP(id);
+    }
 }

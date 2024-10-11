@@ -4,12 +4,13 @@ import lombok.Data;
 import java.time.LocalDate;
 
 @Data
-public class LoteDTO {
+public class LoteDto {
 
-    private String nombreLote;
+    private String lote;
     private int numeroAnimales;
     private LocalDate fechaSiembra;
-    private int proveedorId;
-    private int especiesId;
+    private Long diasDeSiembra;
+    private int especieId;
     private int unidadProductivaId;
+    private int proveedorId;
 }

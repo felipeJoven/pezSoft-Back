@@ -1,7 +1,7 @@
 package com.peces.pezSoft.service.impl;
 
-import com.fish.fishNet.dtos.DefaultResponseDto;
-import com.fish.fishNet.utils.Message;
+import com.peces.pezSoft.dtos.DefaultResponseDto;
+import com.peces.pezSoft.utils.Message;
 import com.peces.pezSoft.dtos.LoginDto;
 import com.peces.pezSoft.dtos.RegistroDto;
 import com.peces.pezSoft.model.Rol;
