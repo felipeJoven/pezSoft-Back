@@ -3,9 +3,9 @@ package com.peces.pezSoft.dtos;
 import lombok.Data;
 
 @Data
-public class RegistroDto {
-
-    private String username;
+public class UsuarioDto {
+    private Integer id;
+    private String usuario;
     private String password;
     private String confirmPassword;
     private String nombre;
@@ -13,5 +13,5 @@ public class RegistroDto {
     private Long telefono;
     private String email;
     private int rolId;
-
+    private String rolName;
 }

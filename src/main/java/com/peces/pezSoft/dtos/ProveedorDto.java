@@ -6,7 +6,6 @@ import java.time.LocalDate;
 
 @Data
 public class ProveedorDto {
-
     private Integer id;
     private LocalDate fechaCreacion;
     private String nombre;
@@ -18,4 +17,6 @@ public class ProveedorDto {
     private Long numeroIdentificacion;
     private int tipoIdentificacionId;
     private int tipoProveedorId;
+    private String tipoIdentificacionName;
+    private String tipoProveedorName;
 }

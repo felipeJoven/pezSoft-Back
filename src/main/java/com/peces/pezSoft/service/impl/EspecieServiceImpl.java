@@ -47,7 +47,7 @@ public class EspecieServiceImpl implements EspecieService {
             if (optionalEspecie.isPresent()) {
                 return ResponseEntity.ok(optionalEspecie);
             } else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body(Message.MENSAJE_ERROR_ID + id);
             }
         } catch (Exception e) {
@@ -91,7 +91,7 @@ public class EspecieServiceImpl implements EspecieService {
                 return ResponseEntity.ok(Message.MENSAJE_EXITOSO_ACTUALIZADO + "la especie");
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(Message.MENSAJE_ERROR_ID);
+                        .body(Message.MENSAJE_ERROR_ID + id);
             }
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -111,7 +111,6 @@ public class EspecieServiceImpl implements EspecieService {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body(Message.MENSAJE_ERROR_ID + id);
             }
-
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Message.MENSAJE_ERROR_SERVIDOR + e.getMessage());

@@ -3,7 +3,7 @@ package com.peces.pezSoft.service.impl;
 import com.peces.pezSoft.dtos.DefaultResponseDto;
 import com.peces.pezSoft.utils.Message;
 import com.peces.pezSoft.dtos.LoginDto;
-import com.peces.pezSoft.dtos.RegistroDto;
+import com.peces.pezSoft.dtos.UsuarioDto;
 import com.peces.pezSoft.model.Rol;
 import com.peces.pezSoft.model.Usuario;
 import com.peces.pezSoft.repository.RolRepository;
@@ -15,12 +15,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -34,34 +32,6 @@ public class AuthServiceImpl implements AuthService {
 
     private boolean passwordsEqual(String password, String confirmPassword) {
         return password.equals(confirmPassword);
-    }
-
-    private boolean esAdminAutenticado() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return authentication != null && authentication.getAuthorities().stream()
-                .anyMatch(authority -> authority.getAuthority().equals("Admin"));
-    }
-
-    @Override
-    public ResponseEntity<?> listarUsuarios() {
-        try {
-            List<Usuario> usuarios = usuarioRepository.findAll();
-            return ResponseEntity.ok(usuarios);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Message.MENSAJE_ERROR_SERVIDOR + e.getMessage());
-        }
-    }
-
-    @Override
-    public ResponseEntity<?> listarRoles() {
-        try {
-            List<Rol> roles = rolRepository.findAll();
-            return ResponseEntity.ok(roles);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Message.MENSAJE_ERROR_SERVIDOR + e.getMessage());
-        }
     }
 
     @Override
@@ -91,39 +61,35 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public ResponseEntity<?> registro(RegistroDto registroDto) {
+    public ResponseEntity<?> registro(UsuarioDto usuarioDto) {
         try {
-            boolean existeUsuario = usuarioRepository.count() > 0;
-            if (usuarioRepository.existsByEmail(registroDto.getEmail())) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(Message.MENSAJE_ERROR_EMAIL);
-            }
-            if (!passwordsEqual(registroDto.getPassword(), registroDto.getConfirmPassword())) {
+            boolean sinUsuario = usuarioRepository.count() == 0;
+            if (sinUsuario) {
+                // Si no existe un admin, permite crearlo
+            if (!passwordsEqual(usuarioDto.getPassword(), usuarioDto.getConfirmPassword())) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body(Message.MENSAJE_ERROR_PASSWORD);
             }
             Usuario usuario = new Usuario();
-            String telefono = String.valueOf(registroDto.getTelefono());
+            String telefono = String.valueOf(usuarioDto.getTelefono());
             if (telefono.length() == 10) {
-                usuario.setTelefono(registroDto.getTelefono());
+                usuario.setTelefono(usuarioDto.getTelefono());
             } else {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body(Message.MENSAJE_ERROR_TELEFONO);
             }
-            String email = registroDto.getEmail();
+            String email = usuarioDto.getEmail();
             if (!email.isEmpty()) {
-                usuario.setEmail(registroDto.getEmail());
+                usuario.setEmail(usuarioDto.getEmail());
             } else {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body(Message.MENSAJE_ERROR_EMAIL_VACIO);
             }
-            usuario.setUsuario(registroDto.getUsername());
-            usuario.setPassword(passwordEncoder.encode(registroDto.getPassword()));
-            usuario.setNombre(registroDto.getNombre());
-            usuario.setApellido(registroDto.getApellido());
+            usuario.setUsuario(usuarioDto.getUsuario());
+            usuario.setPassword(passwordEncoder.encode(usuarioDto.getPassword()));
+            usuario.setNombre(usuarioDto.getNombre());
+            usuario.setApellido(usuarioDto.getApellido());
             usuario.setFechaCreacion(LocalDate.now());
-            if (!existeUsuario) {
-                // Si no existe un admin, permite crearlo
                 Optional<Rol> rolAdmin = rolRepository.findByName("Admin");
                 if (rolAdmin.isEmpty()) {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -134,33 +100,8 @@ public class AuthServiceImpl implements AuthService {
                 return ResponseEntity.status(HttpStatus.CREATED)
                         .body(String.format(Message.MENSAJE_EXITOSO_REGISTRO, "Admin"));
             } else {
-                // Si ya existe un admin, verificar si es admin
-                if (esAdminAutenticado()) {
-                    Optional<Rol> optionalRol = rolRepository.findById(registroDto.getRolId());
-                    if (optionalRol.isPresent()) {
-                        usuario.setRol(optionalRol.get());
-                        usuarioRepository.save(usuario);
-                        Integer rolId = optionalRol.get().getId();
-                        if (rolId.equals(1)) {
-                            return ResponseEntity.status(HttpStatus.CREATED)
-                                    .body(String.format(Message.MENSAJE_EXITOSO_REGISTRO, "Admin"));
-
-                        } else if (rolId.equals(2)) {
-                            return ResponseEntity.status(HttpStatus.CREATED)
-                                    .body(String.format(Message.MENSAJE_EXITOSO_REGISTRO, "User"));
-
-                        } else {
-                            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                                    .body(Message.MENSAJE_ERROR_ROL);
-                        }
-                    } else {
-                        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                                .body(Message.MENSAJE_ERROR_SELECCIONAR_ROL);
-                    }
-                } else {
-                    return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                            .body(Message.MENSAJE_ERROR_CREAR_USUARIO);
-                }
+                return ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body("Ya existe un usuario, debe autenticarse!");
             }
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

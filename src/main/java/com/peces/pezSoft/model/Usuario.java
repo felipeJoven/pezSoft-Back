@@ -38,5 +38,4 @@ public class Usuario extends Base {
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private Rol rol;
-    
 }

@@ -60,7 +60,8 @@ public class ProveedorServiceImpl implements ProveedorService {
     public ResponseEntity<?> verProveedorPorId(Integer id) {
         try {
             Optional<Proveedor> proveedor = proveedorRepository.findById(id);
-            Optional<ProveedorDto> optionalProveedor = modelMapper.map(proveedor, new TypeToken<Optional<ProveedorDto>>() {}.getType());
+            Optional<ProveedorDto> optionalProveedor = modelMapper.map(proveedor, new TypeToken<Optional<ProveedorDto>>() {
+            }.getType());
             if (optionalProveedor.isPresent()) {
                 return ResponseEntity.ok(optionalProveedor);
             } else {
@@ -128,7 +129,7 @@ public class ProveedorServiceImpl implements ProveedorService {
                 String telefono = String.valueOf(proveedorDto.getTelefono());
                 if (
                         !proveedorDto.getNumeroIdentificacion().equals(proveedor.getNumeroIdentificacion()) &&
-                        identificacion.length() < 7 || identificacion.length() > 10
+                                identificacion.length() < 7 || identificacion.length() > 10
                 ) {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                             .body("El número de documento debe contener entre 7 y 10 números!");
@@ -157,7 +158,7 @@ public class ProveedorServiceImpl implements ProveedorService {
                 return ResponseEntity.ok(Message.MENSAJE_EXITOSO_ACTUALIZADO + "el proveedor");
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(Message.MENSAJE_ERROR_ID);
+                        .body(Message.MENSAJE_ERROR_ID + id);
             }
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

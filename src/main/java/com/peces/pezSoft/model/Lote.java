@@ -22,17 +22,17 @@ public class Lote extends Base {
     @Column(nullable = false)
     private String lote;
 
-    @Column(name = "numero_animales", nullable = false)
-    private int  numeroAnimales;
+    @Column(name = "numero_peces", nullable = false)
+    private int  numeroPeces;
 
     @Column(name = "fecha_siembra", nullable = false)
     private LocalDate fechaSiembra;
 
-    @Column(name = "animales_iniciales")
-    private Integer animalesIniciales;
+    @Column(name = "peces_iniciales")
+    private int pecesIniciales;
 
     @Transient
-    private Long diasDeSiembra;
+    private Long diasCultivados;
 
     // Especies
     @ManyToOne(optional = false)

@@ -41,7 +41,7 @@ public class LoteServiceImpl implements LoteService {
         try {
             List<Lote> lotes;
             if (filtro != null && !filtro.isEmpty()) {
-                lotes = loteRepository.findByNombreLoteAndFechaSiembra(filtro);
+                lotes = loteRepository.findByLoteAndFechaSiembra(filtro);
             } else {
                 lotes = loteRepository.findAll();
             }
@@ -51,7 +51,7 @@ public class LoteServiceImpl implements LoteService {
                         Long diasDeSiembra = ChronoUnit.DAYS.between(lote.getFechaSiembra(), LocalDate.now());
                         // Mapear el lote al dto y asignar el valor calculado a diasDeSiembra
                         LoteDto loteDto = modelMapper.map(lote, LoteDto.class);
-                        loteDto.setDiasDeSiembra(diasDeSiembra);
+                        loteDto.setDiasCultivados(diasDeSiembra);
                         return loteDto;
                     })
                     .collect(Collectors.toList());
@@ -77,7 +77,7 @@ public class LoteServiceImpl implements LoteService {
                 Long diasDeSiembra = ChronoUnit.DAYS.between(lote.getFechaSiembra(), LocalDate.now());
                 // Mapear el lote al dto y asignar el valor calculado a diasDeSiembra
                 LoteDto loteDto = modelMapper.map(lote, LoteDto.class);
-                loteDto.setDiasDeSiembra(diasDeSiembra);
+                loteDto.setDiasCultivados(diasDeSiembra);
                 return ResponseEntity.ok(loteDto);
             } else {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -114,10 +114,8 @@ public class LoteServiceImpl implements LoteService {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                             .body("La fecha de siembra no puede ser futura!");
                 }
-                // Asignarle valor a animalesInicial
-                if (lote.getAnimalesIniciales() == null) {
-                    lote.setAnimalesIniciales(loteDto.getNumeroAnimales());
-                }
+                // Asignarle valor a pecesIniciales
+                lote.setPecesIniciales(loteDto.getNumeroPeces());
                 // Verificar que existan unidades productivas, especies y proveedores en la bd
                 Especie especie = especieRepository.findById(loteDto.getEspecieId())
                         .orElseThrow(() -> new EntityNotFoundException("Especie no encontrada!"));
@@ -126,12 +124,12 @@ public class LoteServiceImpl implements LoteService {
                         .orElseThrow(() -> new EntityNotFoundException("Unidad productiva no encontrada!"));
                 lote.setUnidadProductiva(unidadProductiva);
                 // Cambiar el estado de la unidad productiva a ocupada
-                if(unidadProductiva.getEstado() == 0) {
+                if (unidadProductiva.getEstado() == 0) {
                     unidadProductiva.setEstado(1);
                     unidadProductivaRepository.save(unidadProductiva);
                 } else {
-                   return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                           .body("La unidad productiva no está disponible!");
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                            .body("La unidad productiva no está disponible!");
                 }
                 Proveedor proveedor = proveedorRepository.findById(loteDto.getProveedorId())
                         .orElseThrow(() -> new EntityNotFoundException("Proveedor no encontrado!"));
@@ -169,20 +167,35 @@ public class LoteServiceImpl implements LoteService {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                             .body("La fecha de siembra no puede ser futura!");
                 }
-                // Asignarle valor a animalesInicial
-                if (lote.getAnimalesIniciales().equals(lote.getNumeroAnimales())) {
-                    lote.setAnimalesIniciales(loteDto.getNumeroAnimales());
+                // Asignarle valor a animalesInicial y no permitir cambio si hay salida de peces
+                if (lote.getPecesIniciales() == lote.getNumeroPeces()) {
+                    loteDto.setPecesIniciales(loteDto.getNumeroPeces());
                 } else {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                            .body("El lote ya no se puede editar porque ya está en uso!");
+                            .body("El lote no se puede editar porque ya está en uso!");
                 }
                 // Verificar que existan unidades productivas, especies y proveedores en la bd
                 Especie especie = especieRepository.findById(loteDto.getEspecieId())
                         .orElseThrow(() -> new EntityNotFoundException("Especie no encontrada!"));
                 lote.setEspecie(especie);
-                UnidadProductiva unidadProductiva = unidadProductivaRepository.findById(loteDto.getUnidadProductivaId())
-                        .orElseThrow(() -> new EntityNotFoundException("Unidad productiva no encontrada!"));
-                lote.setUnidadProductiva(unidadProductiva);
+                // Validar si es otra unidad productiva
+                if (loteDto.getUnidadProductivaId() != lote.getUnidadProductiva().getId()) {
+                    UnidadProductiva unidadProductiva = unidadProductivaRepository.findById(loteDto.getUnidadProductivaId())
+                            .orElseThrow(() -> new EntityNotFoundException("Unidad productiva no encontrada!"));
+                    // Validar el estado de la unidad productiva
+                    if (unidadProductiva.getEstado() != 0) {
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                                .body("La unidad productiva no está disponible!");
+                    }
+                    // Cambiar estado a la unidad productiva anterior
+                    UnidadProductiva unidadAnterior = lote.getUnidadProductiva();
+                    unidadAnterior.setEstado(0);
+                    unidadProductivaRepository.save(unidadAnterior);
+                    // Cambiar el estado de la unidad productiva a ocupada
+                    unidadProductiva.setEstado(1);
+                    unidadProductivaRepository.save(unidadProductiva);
+                    lote.setUnidadProductiva(unidadProductiva);
+                }
                 Proveedor proveedor = proveedorRepository.findById(loteDto.getProveedorId())
                         .orElseThrow(() -> new EntityNotFoundException("Proveedor no encontrado!"));
                 lote.setProveedor(proveedor);
@@ -219,6 +232,17 @@ public class LoteServiceImpl implements LoteService {
             Optional<Lote> loteOptional = loteRepository.findById(id);
             if (loteOptional.isPresent()) {
                 Lote lote = loteOptional.get();
+                if (lote.getNumeroPeces() != lote.getPecesIniciales()) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                            .body("El lote no se puede eliminar porque ya está en uso!");
+                }
+                // Cambiar el estado de la unidad productiva a disponible
+                UnidadProductiva unidadProductiva = unidadProductivaRepository.findById(lote.getUnidadProductiva().getId())
+                        .orElseThrow(() -> new EntityNotFoundException("Unidad productiva no encontrada!"));
+                if (unidadProductiva.getEstado() == 1) {
+                    unidadProductiva.setEstado(0);
+                    unidadProductivaRepository.save(unidadProductiva);
+                }
                 loteRepository.delete(lote);
                 return ResponseEntity.ok(Message.MENSAJE_EXITOSO_ELIMINADO + "este lote");
             } else {

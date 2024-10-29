@@ -14,6 +14,7 @@ public interface ProveedorRepository extends BaseRespository<Proveedor, Integer>
     // Verifica si existe un proveedor en la BD
     Boolean existsByNumeroIdentificacion(Long numero);
 
+    // Encontrar proveedor por razon social y número de identificación
     @Query("SELECT p FROM Proveedor p WHERE " +
             "LOWER(p.razonSocial) LIKE LOWER(CONCAT('%', :filtro, '%')) OR " +
             "CAST(p.numeroIdentificacion AS STRING) LIKE CONCAT('%', :filtro, '%')")

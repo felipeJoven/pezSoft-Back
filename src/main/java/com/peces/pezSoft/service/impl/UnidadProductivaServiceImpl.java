@@ -113,7 +113,7 @@ public class UnidadProductivaServiceImpl implements UnidadProductivaService {
                 return ResponseEntity.ok(Message.MENSAJE_EXITOSO_ACTUALIZADO + "la unidad productiva");
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(Message.MENSAJE_ERROR_ID);
+                        .body(Message.MENSAJE_ERROR_ID + id);
             }
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

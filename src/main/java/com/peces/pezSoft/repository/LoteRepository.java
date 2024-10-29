@@ -15,5 +15,5 @@ public interface LoteRepository extends BaseRespository<Lote, Integer> {
     @Query("SELECT l FROM Lote l WHERE " +
             "LOWER(l.lote) LIKE LOWER(CONCAT('%', :filtro, '%')) " )
 //            "LOWER(l.fechaSiembra) LIKE LOWER(CONCAT('%', :filtro, '%'))")
-    List<Lote> findByNombreLoteAndFechaSiembra(String filtro);
+    List<Lote> findByLoteAndFechaSiembra(String filtro);
 }

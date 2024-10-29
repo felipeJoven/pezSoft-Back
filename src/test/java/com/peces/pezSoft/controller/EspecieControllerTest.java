@@ -5,29 +5,29 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class ProveedorControllerTest {
+class EspecieControllerTest {
 
     @BeforeEach
     void setUp() {
     }
 
     @Test
-    void obtenerProveedores() {
+    void obtenerEspecies() {
     }
 
     @Test
-    void obtenerProveedorPorId() {
+    void obtenerEspecieId() {
     }
 
     @Test
-    void crearProveedor() {
+    void crearEspecie() {
     }
 
     @Test
-    void editarProveedor() {
+    void editarEspecie() {
     }
 
     @Test
-    void borrarProveedor() {
+    void borrarEspecie() {
     }
 }

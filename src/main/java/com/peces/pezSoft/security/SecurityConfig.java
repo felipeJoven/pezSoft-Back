@@ -37,20 +37,22 @@ public class SecurityConfig {
     }
 
     @Bean
-    SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
+    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .exceptionHandling((exceptionHandling) -> exceptionHandling.authenticationEntryPoint(jwtAuthenticationEntryPoint))
                 .sessionManagement((sessionManagement) -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
-                    .requestMatchers("/auth/**").permitAll()
-                    .requestMatchers(HttpMethod.POST, "/crear").hasAnyAuthority("Admin", "User")
-                    .requestMatchers(HttpMethod.GET,"/listar").hasAnyAuthority("Admin", "User")
-                    .requestMatchers(HttpMethod.GET,"/listarId/**").hasAnyAuthority("Admin", "User")
-                    .requestMatchers(HttpMethod.DELETE,"/eliminar/**").hasAnyAuthority("Admin", "User")
-                    .requestMatchers(HttpMethod.PUT, "/actualizar").hasAnyAuthority("Admin", "User")
-                    .anyRequest().authenticated()
+                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/usuario").hasAuthority("Admin")
+                        .requestMatchers(HttpMethod.GET, "/usuario/**").hasAuthority("Admin")
+                        .requestMatchers(HttpMethod.GET, "/usuario/perfil").hasAnyAuthority("Admin", "User")
+                        .requestMatchers(HttpMethod.POST, "/usuario").hasAuthority("Admin")
+                        .requestMatchers(HttpMethod.PUT, "/usuario/**").hasAuthority("Admin")
+                        .requestMatchers(HttpMethod.PUT, "/usuario/perfil").hasAnyAuthority("Admin", "User")
+                        .requestMatchers(HttpMethod.DELETE, "/usuario/**").hasAuthority("Admin")
+                        .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
