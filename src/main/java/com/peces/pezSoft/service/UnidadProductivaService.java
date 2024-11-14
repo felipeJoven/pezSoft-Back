@@ -4,7 +4,6 @@ import com.peces.pezSoft.model.UnidadProductiva;
 import org.springframework.http.ResponseEntity;
 
 public interface UnidadProductivaService {
-
     ResponseEntity<?> listarUnidadP(String filtro);
     ResponseEntity<?> listarUnidadPPorId(Integer id);
     ResponseEntity<?> agregarUnidadP(UnidadProductiva unidadP);

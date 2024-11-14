@@ -41,6 +41,7 @@ public class ProveedorServiceImpl implements ProveedorService {
             } else {
                 proveedores = proveedorRepository.findAll();
             }
+            // Se realiza una lista con el dto para ocultar datos
             List<ProveedorDto> proveedorDtos = proveedores.stream()
                     .map(proveedor -> modelMapper.map(proveedor, ProveedorDto.class))
                     .collect(Collectors.toList());
@@ -60,6 +61,7 @@ public class ProveedorServiceImpl implements ProveedorService {
     public ResponseEntity<?> verProveedorPorId(Integer id) {
         try {
             Optional<Proveedor> proveedor = proveedorRepository.findById(id);
+            // Se realiza una opcion con el dto para ocultar datos
             Optional<ProveedorDto> optionalProveedor = modelMapper.map(proveedor, new TypeToken<Optional<ProveedorDto>>() {
             }.getType());
             if (optionalProveedor.isPresent()) {

@@ -16,8 +16,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Mortalidad extends Base {
 
-    @Column(name = "animales_muertos", nullable = false)
-    private int animalesMuertos;
+    @Column(name = "peces_muertos", nullable = false)
+    private int pecesMuertos;
 
     @Column(name = "observacion", nullable = false)
     private String observacion;
@@ -26,5 +26,4 @@ public class Mortalidad extends Base {
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private Lote lote;
-
 }

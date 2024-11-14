@@ -32,5 +32,4 @@ public class TipoProveedorServiceImpl implements TipoProveedorService {
                     .body(Message.MENSAJE_ERROR_SERVIDOR + e.getMessage());
         }
     }
-
 }

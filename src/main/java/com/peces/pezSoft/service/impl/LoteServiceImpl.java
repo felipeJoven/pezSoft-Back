@@ -45,6 +45,7 @@ public class LoteServiceImpl implements LoteService {
             } else {
                 lotes = loteRepository.findAll();
             }
+            // Se realiza una lista con el dto para ocultar datos
             List<LoteDto> loteDtos = lotes.stream()
                     .map(lote -> {
                         // Operación para caluclar los dias de siembra con la fecha actual
@@ -175,15 +176,15 @@ public class LoteServiceImpl implements LoteService {
                             .body("El lote no se puede editar porque ya está en uso!");
                 }
                 // Verificar que existan unidades productivas, especies y proveedores en la bd
-                Especie especie = especieRepository.findById(loteDto.getEspecieId())
+                Especie especieActualizada = especieRepository.findById(loteDto.getEspecieId())
                         .orElseThrow(() -> new EntityNotFoundException("Especie no encontrada!"));
-                lote.setEspecie(especie);
+                lote.setEspecie(especieActualizada);
                 // Validar si es otra unidad productiva
                 if (loteDto.getUnidadProductivaId() != lote.getUnidadProductiva().getId()) {
-                    UnidadProductiva unidadProductiva = unidadProductivaRepository.findById(loteDto.getUnidadProductivaId())
+                    UnidadProductiva unidadProductivaActualizada = unidadProductivaRepository.findById(loteDto.getUnidadProductivaId())
                             .orElseThrow(() -> new EntityNotFoundException("Unidad productiva no encontrada!"));
                     // Validar el estado de la unidad productiva
-                    if (unidadProductiva.getEstado() != 0) {
+                    if (unidadProductivaActualizada.getEstado() != 0) {
                         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                                 .body("La unidad productiva no está disponible!");
                     }
@@ -192,13 +193,13 @@ public class LoteServiceImpl implements LoteService {
                     unidadAnterior.setEstado(0);
                     unidadProductivaRepository.save(unidadAnterior);
                     // Cambiar el estado de la unidad productiva a ocupada
-                    unidadProductiva.setEstado(1);
-                    unidadProductivaRepository.save(unidadProductiva);
-                    lote.setUnidadProductiva(unidadProductiva);
+                    unidadProductivaActualizada.setEstado(1);
+                    unidadProductivaRepository.save(unidadProductivaActualizada);
+                    lote.setUnidadProductiva(unidadProductivaActualizada);
                 }
-                Proveedor proveedor = proveedorRepository.findById(loteDto.getProveedorId())
+                Proveedor proveedorActualizado = proveedorRepository.findById(loteDto.getProveedorId())
                         .orElseThrow(() -> new EntityNotFoundException("Proveedor no encontrado!"));
-                lote.setProveedor(proveedor);
+                lote.setProveedor(proveedorActualizado);
                 // Configurar ModelMapper para ignorar los campos que no deben cambiar
                 modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
                 TypeMap<LoteDto, Lote> typeMap = modelMapper.getTypeMap(LoteDto.class, Lote.class);

@@ -93,23 +93,23 @@ public class UnidadProductivaServiceImpl implements UnidadProductivaService {
             boolean existeCoordenadas = unidadProductivaRepository.existsByCoordenadas(unidadP.getCoordenadas());
             Optional<UnidadProductiva> unidadOptional = unidadProductivaRepository.findById(id);
             if (unidadOptional.isPresent()) {
-                UnidadProductiva unidadExistente = unidadOptional.get();
+                UnidadProductiva unidadActualizada = unidadOptional.get();
                 if (
-                        existeUnidad && !unidadP.getUnidadP().equals(unidadExistente.getUnidadP()) &&
-                                existeCoordenadas && !unidadP.getCoordenadas().equals(unidadExistente.getCoordenadas())
+                        existeUnidad && !unidadP.getUnidadP().equals(unidadActualizada.getUnidadP()) &&
+                                existeCoordenadas && !unidadP.getCoordenadas().equals(unidadActualizada.getCoordenadas())
                 ) {
                     return ResponseEntity.status(HttpStatus.CONFLICT)
                             .body("La unidad productiva y las coordenadas no estan disponibles!");
-                } else if (!unidadP.getUnidadP().equals(unidadExistente.getUnidadP()) && existeUnidad) {
+                } else if (!unidadP.getUnidadP().equals(unidadActualizada.getUnidadP()) && existeUnidad) {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                             .body(String.format(Message.MENSAJE_ERROR_EXISTE, "esta unidad productiva"));
-                } else if (!unidadP.getCoordenadas().equals(unidadExistente.getCoordenadas()) && existeCoordenadas) {
+                } else if (!unidadP.getCoordenadas().equals(unidadActualizada.getCoordenadas()) && existeCoordenadas) {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                             .body(String.format(Message.MENSAJE_ERROR_EXISTE, "estas coordenadas"));
                 }
-                // Copia todas las propiedades de unidadP a unidadExistente excepto el ID
-                BeanUtils.copyProperties(unidadP, unidadExistente, "id", "fechaCreacion", "estado");
-                unidadProductivaRepository.save(unidadExistente);
+                // Copia todas las propiedades de unidadP a unidadActualizada excepto el ID
+                BeanUtils.copyProperties(unidadP, unidadActualizada, "id", "fechaCreacion", "estado");
+                unidadProductivaRepository.save(unidadActualizada);
                 return ResponseEntity.ok(Message.MENSAJE_EXITOSO_ACTUALIZADO + "la unidad productiva");
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)

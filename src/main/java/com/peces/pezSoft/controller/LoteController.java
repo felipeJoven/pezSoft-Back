@@ -15,7 +15,7 @@ public class LoteController {
     private LoteService loteService;
 
     @GetMapping("")
-    public ResponseEntity<?> obtenerLotes(String filtro) {
+    public ResponseEntity<?> obtenerLotes(@RequestParam(required = false) String filtro) {
         return loteService.verLotes(filtro);
     }
 

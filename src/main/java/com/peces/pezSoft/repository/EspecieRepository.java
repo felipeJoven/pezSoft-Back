@@ -14,7 +14,7 @@ public interface EspecieRepository extends BaseRespository<Especie, Integer>{
     Boolean existsByEspecie(String especie);
     // Realiza busqueda por especie
 
-
+    // Encontrar una lista de especies por nombre
     @Query("SELECT e FROM Especie e WHERE " +
             "LOWER(e.especie) LIKE LOWER(CONCAT('%', :filtro, '%'))")
     List<Especie> findByEspecie(@Param("filtro") String filtro);

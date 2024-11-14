@@ -81,13 +81,13 @@ public class EspecieServiceImpl implements EspecieService {
             boolean existeEspecie = especieRepository.existsByEspecie(especie.getEspecie());
             Optional<Especie> especieOptional = especieRepository.findById(id);
             if (especieOptional.isPresent()) {
-                Especie especieExistente = especieOptional.get();
-                if (!especie.getEspecie().equals(especieExistente.getEspecie()) && existeEspecie) {
+                Especie especieActualizada = especieOptional.get();
+                if (!especie.getEspecie().equals(especieActualizada.getEspecie()) && existeEspecie) {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                             .body(String.format(Message.MENSAJE_ERROR_EXISTE, "esta especie!"));
                 }
-                especieExistente.setEspecie(especie.getEspecie());
-                especieRepository.save(especieExistente);
+                especieActualizada.setEspecie(especie.getEspecie());
+                especieRepository.save(especieActualizada);
                 return ResponseEntity.ok(Message.MENSAJE_EXITOSO_ACTUALIZADO + "la especie");
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)

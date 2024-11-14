@@ -30,7 +30,6 @@ public class TipoIdentificacionServiceImpl implements TipoIdentificacionService 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Message.MENSAJE_ERROR_SERVIDOR + e.getMessage());
-
         }
     }
 }

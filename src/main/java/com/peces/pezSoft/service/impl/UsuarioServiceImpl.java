@@ -216,9 +216,9 @@ public class UsuarioServiceImpl implements UsuarioService {
                 usuario.setTelefono(usuarioDto.getTelefono());
                 usuario.setFechaCreacion(LocalDate.now());
                 // Verificar que existan los roles en la bd
-                Rol rol = rolRepository.findById(usuarioDto.getRolId())
+                Rol rolActualizado = rolRepository.findById(usuarioDto.getRolId())
                         .orElseThrow(() -> new EntityNotFoundException(Message.MENSAJE_ERROR_ROL));
-                usuario.setRol(rol);
+                usuario.setRol(rolActualizado);
                 usuarioRepository.save(usuario);
                 return ResponseEntity.status(HttpStatus.OK)
                         .body(String.format(Message.MENSAJE_EXITOSO_ACTUALIZADO + "el Usuario"));

@@ -10,5 +10,4 @@ public interface RolRepository extends BaseRespository<Rol, Integer>{
 
     //Metodo para poder buscar un rol mediante su nombre
     Optional<Rol> findByName(String name);
-
 }

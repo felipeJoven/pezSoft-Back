@@ -16,8 +16,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Pesca extends Base {
     
-    @Column(name="animales_pescados", nullable = false)
-    private int animalesPescados;
+    @Column(name="peces_pescados", nullable = false)
+    private int pecesPescados;
     
     @Column(name="peso_promedio", nullable = false)
     private double pesoPromedio;
